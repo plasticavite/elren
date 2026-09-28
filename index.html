@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELREN - Red Educativa Nova</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Cinzel', 'serif']
+                    },
+                    colors: {
+                        gold: {
+                            100: '#fef08a',
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .bg-glow-amber {
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+        .bg-glow-orange {
+            background: radial-gradient(circle, rgba(234, 88, 12, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        /* Glassmorphic Card Container */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.08);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.45);
+        }
+
+        /* Glassmorphic Input Field */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .dark .glass-input {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        /* Metallic Gold Gradient Text */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fef08a 0%, #facc15 35%, #f97316 70%, #ca8a04 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-gradient-text-light {
+            background: linear-gradient(135deg, #78350f 0%, #b45309 40%, #ea580c 75%, #ca8a04 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Circular Progress Timer Animation */
+        .timer-circle {
+            transition: stroke-dashoffset 1s linear;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Canvas Sphere Glow Effect */
+        .canvas-glow-container {
+            filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.45));
+            transition: filter 0.4s ease;
+        }
+        .canvas-glow-container:hover {
+            filter: drop-shadow(0 0 28px rgba(245, 158, 11, 0.7));
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-500 relative overflow-x-hidden selection:bg-amber-500 selection:text-white">
+
+    <div class="fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-glow-amber pointer-events-none rounded-full blur-3xl z-0"></div>
+    <div class="fixed bottom-10 right-10 w-[450px] h-[450px] bg-glow-orange pointer-events-none rounded-full blur-3xl z-0"></div>
+
+    <!-- Header Section -->
+    <header class="w-full px-6 py-5 flex items-center justify-between z-20 max-w-7xl mx-auto">
+        <!-- ELREN Status Badge -->
+        <div class="flex items-center gap-2.5 glass-card px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400 border-amber-500/20">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>Red Educativa Nova</span>
+        </div>
+
+        <!-- Timer & Theme Toggle Controls -->
+        <div class="flex items-center gap-3">
+            <!-- 5-Minute Continuous Inactivity Countdown -->
+            <div class="flex items-center gap-3 glass-card px-4 py-2 rounded-2xl shadow-sm border-amber-500/20">
+                <div class="relative w-8 h-8 flex items-center justify-center">
+                    <svg class="w-8 h-8">
+                        <circle class="text-slate-200 dark:text-slate-800" stroke-width="2.5" stroke="currentColor" fill="transparent" r="13" cx="16" cy="16"/>
+                        <circle id="timerProgress" class="timer-circle text-amber-500" stroke-width="2.5" stroke-dasharray="81.68" stroke-dashoffset="0" stroke-linecap="round" stroke="currentColor" fill="transparent" r="13" cx="16" cy="16"/>
+                    </svg>
+                    <i class="fa-solid fa-hourglass-start text-[10px] text-amber-500 absolute"></i>
+                </div>
+                
+                <div class="flex flex-col">
+                    <span id="timerDisplay" class="font-mono text-base font-bold tracking-wider text-slate-800 dark:text-slate-100">05:00</span>
+                    <span class="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Inactividad</span>
+                </div>
+            </div>
+
+            <!-- Theme Switcher Button -->
+            <button id="themeToggleBtn" title="Cambiar Tema" class="w-10 h-10 flex items-center justify-center rounded-2xl glass-card text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 transition shadow-sm active:scale-95">
+                <i id="themeIcon" class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center px-4 z-10 my-auto">
+        <div class="w-full max-w-2xl flex flex-col items-center text-center">
+            
+            <!-- EXPO '92 ROTATING 3D SPHERE CANVAS LOGO -->
+            <div class="mb-4 group cursor-default">
+                <div class="relative w-44 h-44 sm:w-52 sm:h-52 mx-auto flex items-center justify-center canvas-glow-container">
+                    <!-- Subtle ambient aura ring -->
+                    <div class="absolute inset-0 bg-amber-500/15 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <!-- 3D Canvas Rendering the Expo '92 Grid Patch Sphere -->
+                    <canvas id="expoSphereCanvas" width="220" height="220" class="w-full h-full relative z-10"></canvas>
+                </div>
+
+                <!-- Brand Name ELREN -->
+                <h1 id="brandTitle" class="font-serif text-5xl sm:text-6xl font-black tracking-widest mt-2 dark:gold-gradient-text gold-gradient-text-light uppercase drop-shadow-sm">
+                    ELREN
+                </h1>
+
+                <!-- Required Subtitle -->
+                <p class="text-xs sm:text-sm font-semibold tracking-widest text-slate-600 dark:text-slate-300 mt-1.5 uppercase">
+                    Acceso Limitado a la Red Educativa Nova
+                </p>
+            </div>
+
+            <form id="searchForm" class="w-full max-w-xl mb-4 mt-2">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-amber-500 transition duration-300">
+                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                    </div>
+                    
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Buscar en Google..." 
+                        autocomplete="off"
+                        autofocus
+                        class="w-full pl-14 pr-24 py-4 rounded-full glass-input shadow-xl focus:shadow-amber-500/10 focus:outline-none focus:ring-2 focus:ring-amber-500/50 text-slate-800 dark:text-slate-100 text-lg transition-all duration-300"
+                    >
+
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
+                        <button type="button" id="clearSearchBtn" class="hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-full transition">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                        <button type="submit" aria-label="Buscar" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white p-3 rounded-full transition shadow-md hover:shadow-amber-500/30 active:scale-95">
+                            <i class="fa-solid fa-arrow-right text-sm px-0.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search Action Buttons -->
+                <div class="flex items-center justify-center gap-4 mt-6">
+                    <button type="submit" class="px-6 py-3 rounded-2xl glass-card hover:bg-white/80 dark:hover:bg-slate-900/80 text-sm font-medium text-slate-700 dark:text-slate-200 transition shadow-sm hover:shadow border border-amber-500/20 active:scale-95">
+                        Buscar en Google
+                    </button>
+                    <button type="button" id="luckyBtn" class="px-6 py-3 rounded-2xl glass-card hover:bg-white/80 dark:hover:bg-slate-900/80 text-sm font-medium text-slate-700 dark:text-slate-200 transition shadow-sm hover:shadow border border-amber-500/20 active:scale-95">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-2"></i> Voy a tener suerte
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+    <footer class="w-full py-6 text-center text-xs text-slate-500 dark:text-slate-400 z-10">
+        <p>Presiona <kbd class="px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800 font-mono text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">/</kbd> para activar la búsqueda &bull; Sesión protegida y temporizada</p>
+    </footer>
+
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        /**
+         * 3D EXPO '92 SPHERE CANVAS RENDERER
+         * Recreates the classic Expo '92 latitude/longitude golden-orange grid tiles
+         * spinning 360 degrees smoothly in full 3D space.
+         */
+        const canvas = document.getElementById('expoSphereCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const SPHERE_RADIUS = 76;
+        const LATITUDE_BANDS = 11;     // Number of latitude grid divisions
+        const LONGITUDE_BANDS = 20;    // Number of longitude grid divisions
+        const TILE_GAP_FACTOR = 0.82;  // Shrink factor for quads to produce grid tiles
+        const TILT_ANGLE = 0.35;       // Tilt angle on X axis (~20 degrees)
+        
+        let rotationAngle = 0;
+
+        function renderExpoSphere() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Generate sphere grid quads
+            const quads = [];
+
+            const latStep = Math.PI / LATITUDE_BANDS;
+            const lonStep = (Math.PI * 2) / LONGITUDE_BANDS;
+
+            for (let i = 1; i < LATITUDE_BANDS; i++) {
+                const lat1 = -Math.PI / 2 + (i - 1) * latStep;
+                const lat2 = -Math.PI / 2 + i * latStep;
+
+                for (let j = 0; j < LONGITUDE_BANDS; j++) {
+                    const lon1 = j * lonStep;
+                    const lon2 = (j + 1) * lonStep;
+
+                    // 4 vertices of quad patch on sphere surface
+                    const p1 = get3DPoint(lat1, lon1, rotationAngle);
+                    const p2 = get3DPoint(lat1, lon2, rotationAngle);
+                    const p3 = get3DPoint(lat2, lon2, rotationAngle);
+                    const p4 = get3DPoint(lat2, lon1, rotationAngle);
+
+                    // Center point of quad for depth sorting and color lighting
+                    const avgZ = (p1.z + p2.z + p3.z + p4.z) / 4;
+                    const avgY = (p1.y + p2.y + p3.y + p4.y) / 4;
+                    const avgX = (p1.x + p2.x + p3.x + p4.x) / 4;
+
+                    // Only process front-facing polygons for crisp rendering
+                    if (avgZ > -15) {
+                        quads.push({
+                            pts: [p1, p2, p3, p4],
+                            center: { x: avgX, y: avgY, z: avgZ },
+                            latIndex: i
+                        });
+                    }
+                }
+            }
+
+            // Depth sorting (furthest to closest)
+            quads.sort((a, b) => a.center.z - b.center.z);
+
+            // Draw each warm golden-orange grid patch
+            quads.forEach(quad => {
+                drawPatchTile(ctx, quad.pts, quad.center, centerX, centerY);
+            });
+
+            // Increment continuous 360-degree rotation
+            rotationAngle += 0.009;
+
+            requestAnimationFrame(renderExpoSphere);
+        }
+
+        // Project latitude/longitude coordinate to rotated 3D Cartesian coordinates
+        function get3DPoint(lat, lon, angle) {
+            const r = SPHERE_RADIUS;
+
+            // Sphere parametric equations
+            const x0 = r * Math.cos(lat) * Math.sin(lon + angle);
+            const y0 = r * Math.sin(lat);
+            const z0 = r * Math.cos(lat) * Math.cos(lon + angle);
+
+            // Apply tilt around X axis
+            const yRot = y0 * Math.cos(TILT_ANGLE) - z0 * Math.sin(TILT_ANGLE);
+            const zRot = y0 * Math.sin(TILT_ANGLE) + z0 * Math.cos(TILT_ANGLE);
+
+            return { x: x0, y: yRot, z: zRot };
+        }
+
+        // Draw a single warm Expo '92 tile quad with gap spacing and light shading
+        function drawPatchTile(ctx, pts, center, cx, cy) {
+            // Shrink quad vertices slightly toward tile center to create grid gaps
+            const cX = (pts[0].x + pts[1].x + pts[2].x + pts[3].x) / 4;
+            const cY = (pts[0].y + pts[1].y + pts[2].y + pts[3].y) / 4;
+
+            const shrinkPts = pts.map(p => ({
+                x: cx + cX + (p.x - cX) * TILE_GAP_FACTOR,
+                y: cy - (cY + (p.y - cY) * TILE_GAP_FACTOR)
+            }));
+
+            // Color gradient computation based on depth & position (Expo '92 bright yellow to deep orange/red gradient)
+            const depthFactor = Math.max(0, Math.min(1, (center.z + SPHERE_RADIUS) / (SPHERE_RADIUS * 2)));
+            const verticalFactor = Math.max(0, Math.min(1, (center.y + SPHERE_RADIUS) / (SPHERE_RADIUS * 2)));
+
+            // Color palette calculation
+            let r = Math.floor(255);
+            let g = Math.floor(180 * depthFactor + 40 * verticalFactor);
+            let b = Math.floor(20 * (1 - depthFactor));
+            const alpha = Math.min(1, 0.45 + depthFactor * 0.55);
+
+            ctx.beginPath();
+            ctx.moveTo(shrinkPts[0].x, shrinkPts[0].y);
+            ctx.lineTo(shrinkPts[1].x, shrinkPts[1].y);
+            ctx.lineTo(shrinkPts[2].x, shrinkPts[2].y);
+            ctx.lineTo(shrinkPts[3].x, shrinkPts[3].y);
+            ctx.closePath();
+
+            // Fill warm orange patch
+            ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            ctx.fill();
+
+            // Subtle bright border stroke on patch edges
+            ctx.strokeStyle = `rgba(254, 240, 138, ${Math.min(1, alpha + 0.2)})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+        }
+
+        // Start 3D animation loop
+        renderExpoSphere();
+    </script>
+
+    <script>
+        // Inactivity Timer Configuration (5 Minutes = 300 Seconds)
+        const TIMER_DURATION = 300; 
+        let timerSecondsRemaining = TIMER_DURATION;
+        let timerInterval = null;
+
+        // DOM Element References
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const luckyBtn = document.getElementById('luckyBtn');
+        
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerProgress = document.getElementById('timerProgress');
+
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+
+        // Theme Initialization & Switcher
+        function initTheme() {
+            const savedTheme = localStorage.getItem('elren_theme') || 'dark';
+            applyTheme(savedTheme);
+        }
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun text-amber-400';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-moon text-slate-600';
+            }
+            localStorage.setItem('elren_theme', theme);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
+        });
+
+        // 5-Minute Inactivity Timer Loop
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                timerSecondsRemaining--;
+                updateTimerUI();
+
+                if (timerSecondsRemaining <= 0) {
+                    handleTimerExpire();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            timerSecondsRemaining = TIMER_DURATION;
+            updateTimerUI();
+        }
+
+        function updateTimerUI() {
+            const minutes = Math.floor(timerSecondsRemaining / 60);
+            const seconds = timerSecondsRemaining % 60;
+            
+            // Format time MM:SS
+            timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            // Update SVG circle stroke-dashoffset
+            const progressFraction = Math.max(0, timerSecondsRemaining / TIMER_DURATION);
+            const circumference = 2 * Math.PI * 13; // Radius = 13 (~81.68px)
+            const offset = circumference * (1 - progressFraction);
+            timerProgress.style.strokeDashoffset = offset;
+        }
+
+        function handleTimerExpire() {
+            clearInterval(timerInterval);
+            showToast('⏰ Tiempo de inactividad alcanzado. Reiniciando la sesión...', 'info');
+            
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+
+        // Auto-Reset timer on any user interaction
+        const activityEvents = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'];
+        activityEvents.forEach(eventType => {
+            window.addEventListener(eventType, () => {
+                if (timerSecondsRemaining < TIMER_DURATION - 2) {
+                    resetTimer();
+                }
+            }, { passive: true });
+        });
+
+        // Search Handlers
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            if (isValidUrl(query)) {
+                let targetUrl = query.startsWith('http://') || query.startsWith('https://') ? query : `https://${query}`;
+                window.location.href = targetUrl;
+            } else {
+                window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
+        });
+
+        luckyBtn.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `https://www.google.com/search?btnI=I&q=${encodeURIComponent(query)}`;
+            } else {
+                window.location.href = 'https://www.google.com/doodles';
+            }
+        });
+
+        // Input clear button
+        searchInput.addEventListener('input', () => {
+            clearSearchBtn.classList.toggle('hidden', searchInput.value.length === 0);
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.classList.add('hidden');
+            searchInput.focus();
+        });
+
+        // Keyboard hotkey ('/')
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+        });
+
+        function isValidUrl(string) {
+            return /^(https?:\/\/)?([\w\d-]+\.)+[\w\d]{2,}(\/.*)?$/i.test(string);
+        }
+
+        // Toast notifications
+        function showToast(message) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+
+            toast.className = 'bg-amber-600 text-white border-amber-500 px-4 py-3 rounded-2xl shadow-xl text-sm font-medium border flex items-center gap-3 transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto';
+            toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => toast.classList.remove('translate-y-4', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // App Initialization
+        window.onload = function() {
+            initTheme();
+            updateTimerUI();
+            startTimer();
+        };
+    </script>
+</body>
+</html>
